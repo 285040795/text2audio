@@ -115,6 +115,6 @@ python manage.py runserver
 ## 测试
 
 ```bash
-python manage.py test core
+python manage.py test apps
 ```
 

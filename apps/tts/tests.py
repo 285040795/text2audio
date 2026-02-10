@@ -35,63 +35,8 @@ class BaseTestCase(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
 
-class AuthTests(BaseTestCase):
-    def test_register(self):
-        response = self.client.post('/api/auth/register/', {
-            'username': 'newuser',
-            'password': 'newpass123',
-            'email': 'new@example.com',
-        })
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('tokens', response.data)
-        self.assertIn('access', response.data['tokens'])
-        self.assertIn('refresh', response.data['tokens'])
-
-    def test_register_duplicate_username(self):
-        response = self.client.post('/api/auth/register/', {
-            'username': 'testuser',
-            'password': 'anotherpass',
-        })
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_login_success(self):
-        response = self.client.post('/api/auth/login/', {
-            'username': 'testuser',
-            'password': 'testpass123',
-        })
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('tokens', response.data)
-
-    def test_login_invalid_credentials(self):
-        response = self.client.post('/api/auth/login/', {
-            'username': 'testuser',
-            'password': 'wrongpass',
-        })
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_login_missing_fields(self):
-        response = self.client.post('/api/auth/login/', {})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_token_refresh(self):
-        login_resp = self.client.post('/api/auth/login/', {
-            'username': 'testuser',
-            'password': 'testpass123',
-        })
-        refresh_token = login_resp.data['tokens']['refresh']
-        response = self.client.post('/api/auth/token/refresh/', {
-            'refresh': refresh_token,
-        })
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('access', response.data)
-
-    def test_unauthenticated_access(self):
-        response = self.client.post('/api/tts/text/', {'text': 'hello'})
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-
 class TextToSpeechTests(BaseTestCase):
-    @patch('core.services.requests.post')
+    @patch('requests.post')
     def test_text_to_speech(self, mock_post):
         mock_response = MagicMock()
         mock_response.content = b'fake audio data'
@@ -106,7 +51,7 @@ class TextToSpeechTests(BaseTestCase):
         self.assertIn('audio_url', response.data)
         self.assertEqual(response.data['text'], 'Hello world')
 
-    @patch('core.services.requests.post')
+    @patch('requests.post')
     def test_text_to_speech_with_ai_rewrite(self, mock_post):
         # First call: AI rewrite, second call: TTS
         ai_response = MagicMock()
@@ -135,7 +80,7 @@ class TextToSpeechTests(BaseTestCase):
 
 
 class ArticleToSpeechTests(BaseTestCase):
-    @patch('core.services.requests.post')
+    @patch('requests.post')
     def test_article_to_speech(self, mock_post):
         article_response = MagicMock()
         article_response.json.return_value = {'text': 'Article content here'}
@@ -164,7 +109,7 @@ class ArticleToSpeechTests(BaseTestCase):
 
 
 class VideoToSpeechTests(BaseTestCase):
-    @patch('core.services.requests.post')
+    @patch('requests.post')
     def test_video_to_speech(self, mock_post):
         video_response = MagicMock()
         video_response.content = b'fake video data'
@@ -190,7 +135,7 @@ class VideoToSpeechTests(BaseTestCase):
 
 
 class UploadToSpeechTests(BaseTestCase):
-    @patch('core.services.requests.post')
+    @patch('requests.post')
     def test_upload_mp3(self, mock_post):
         transcribe_response = MagicMock()
         transcribe_response.json.return_value = {'text': 'Transcribed from upload'}
@@ -225,4 +170,3 @@ class UploadToSpeechTests(BaseTestCase):
         self._auth()
         response = self.client.post('/api/tts/upload/', {}, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
