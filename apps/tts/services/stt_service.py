@@ -4,7 +4,7 @@ import uuid
 import requests
 from django.conf import settings
 
-from .tts_service import _save_to_media
+from .utils import save_to_media
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +31,6 @@ def audio_to_text(filepath):
 
     # Save transcribed text locally
     filename = f"transcribed_{uuid.uuid4().hex}.txt"
-    _save_to_media(text, filename)
+    save_to_media(text, filename)
 
     return text

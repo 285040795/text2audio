@@ -4,7 +4,7 @@ import uuid
 import requests
 from django.conf import settings
 
-from .tts_service import _save_to_media
+from .utils import save_to_media
 
 logger = logging.getLogger(__name__)
 
@@ -26,5 +26,5 @@ def extract_video(url):
     response.raise_for_status()
 
     filename = f"video_{uuid.uuid4().hex}.mp4"
-    filepath = _save_to_media(response.content, filename)
+    filepath = save_to_media(response.content, filename)
     return filepath

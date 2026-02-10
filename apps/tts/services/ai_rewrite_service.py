@@ -4,7 +4,7 @@ import uuid
 import requests
 from django.conf import settings
 
-from .tts_service import _save_to_media
+from .utils import save_to_media
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,6 @@ def ai_rewrite(text, prompt=''):
 
     # Save rewritten text locally
     filename = f"rewritten_{uuid.uuid4().hex}.txt"
-    _save_to_media(rewritten, filename)
+    save_to_media(rewritten, filename)
 
     return rewritten
