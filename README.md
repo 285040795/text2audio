@@ -118,3 +118,40 @@ python manage.py runserver
 python manage.py test apps
 ```
 
+目录结构：
+text-to-speech/
+├── manage.py
+├── requirements.txt
+├── .env.example
+├── config/                     # 项目配置
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── apps/
+│   ├── accounts/               # 用户认证模块
+│   │   ├── __init__.py
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   └── urls.py
+│   └── tts/                    # 核心TTS模块
+│       ├── __init__.py
+│       ├── models.py
+│       ├── serializers.py
+│       ├── views.py
+│       ├── urls.py
+│       └── services/           # 第三方服务封装
+│           ├── __init__.py
+│           ├── tts_service.py          # 文字转语音
+│           ├── article_extractor.py    # 文章提取
+│           ├── video_extractor.py      # 视频提取
+│           ├── stt_service.py          # 音频转文字
+│           └── ai_rewrite_service.py   # AI改写
+├── media/                      # 用户上传和生成文件
+│   ├── uploads/
+│   ├── articles/
+│   ├── videos/
+│   └── audio_output/
+└── templates/                  # (可选) 前端模板
+
